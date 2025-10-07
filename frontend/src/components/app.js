@@ -1,9 +1,12 @@
-import axios from "axios";
+import React from "react";
+import Ingles from "./components/Ingles";
 
-// Cambiá el host si Flask está en otra máquina o puerto
-const API_URL = "http://localhost:5000";
+function App() {
+  return (
+    <div>
+      <Ingles />
+    </div>
+  );
+}
 
-export const getIngles = () => axios.get(`${API_URL}/ingles`);
-export const postIngles = (data) => axios.post(`${API_URL}/ingles`, data);
-export const putIngles = (id, data) => axios.put(`${API_URL}/ingles/${id}`, data);
-export const deleteIngles = (id) => axios.delete(`${API_URL}/ingles/${id}`);
+export default App;
