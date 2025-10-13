@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar Apuntes - Programación Web</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; }
+        h1 { text-align: center; color: #333; }
+        .form-container { background-color: #fff; border-radius: 10px; padding: 20px; max-width: 400px; margin: 20px auto; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; padding: 8px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; }
+        button { width: 100%; padding: 10px; border: none; border-radius: 5px; background-color: #28A745; color: #fff; font-size: 16px; cursor: pointer; font-weight: bold; }
+        button:hover { opacity: 0.9; }
+        .mensaje { text-align: center; font-weight: bold; margin-top: 10px; }
+        .enlace { text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Agregar Apuntes de Programación Web</h1>
+
+    <div class="form-container">
+        <form id="formProgramacionWeb">
+            <label for="profesorProgramacionWeb">Nombre del Profesor:</label>
+            <input type="text" id="profesorProgramacionWeb" name="profesorProgramacionWeb" required>
+
+            <label for="apunteProgramacionWeb">Apunte:</label>
+            <input type="text" id="apunteProgramacionWeb" name="apunteProgramacionWeb" required>
+
+            <button type="submit">Agregar Apunte</button>
+        </form>
+        <p id="mensajeProgramacionWeb" class="mensaje"></p>
+    </div>
+
+    <div class="enlace">
+        <a href="index.html">Volver a Índice de Materias</a>
+    </div>
+
+    <script>
+        const formProgramacionWeb = document.getElementById("formProgramacionWeb");
+        const mensajeProgramacionWeb = document.getElementById("mensajeProgramacionWeb");
+
+        formProgramacionWeb.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const profesor = document.getElementById("profesorProgramacionWeb").value;
+            const apunte = document.getElementById("apunteProgramacionWeb").value;
+
+            try {
+                const res = await fetch("http://localhost:5000/programacionweb", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ Profesor: profesor, Apuntes: apunte })
+                });
+                const data = await res.json();
+                mensajeProgramacionWeb.textContent = res.ok ? data.mensaje : "Error: " + data.error;
+                if (res.ok) formProgramacionWeb.reset();
+            } catch (err) {
+                mensajeProgramacionWeb.textContent = "Error de conexión";
+            }
+        });
+    </script>
+</body>
+</html>

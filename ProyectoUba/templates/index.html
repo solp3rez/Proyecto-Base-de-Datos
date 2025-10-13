@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apuntes UBA</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; }
+        
+        /* Título con degradado y emoji */
+        .titulo {
+            font-size: 3rem;
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #00CED1, #1E90FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .form-container { background-color: #ffffff; border-radius: 10px; padding: 20px; max-width: 400px; margin: 20px auto; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #020000; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 8px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; }
+        button { width: 100%; padding: 10px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-bottom: 10px; font-weight: bold; }
+        .boton-login { background-color: #1E90FF; color: #fff; }
+        .boton-login:hover { opacity: 0.9; }
+        .mensaje { text-align: center; font-weight: bold; margin-top: 10px; color: rgb(18, 190, 176); }
+        .materias-container { text-align: center; max-width: 400px; margin: 20px auto; }
+        .materia-btn { 
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0dd1c7; 
+            color: #000000;
+            font-size: 16px;
+            font-weight: bold; 
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .materia-btn:hover { opacity: 0.9; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <h1 class="titulo">📘 Apuntes UBA</h1>
+
+    <!-- LOGIN -->
+    <div id="loginContainer" class="form-container">
+        <h2>Iniciar Sesión</h2>
+        <form id="loginForm">
+            <label for="usuario">Usuario:</label>
+            <input type="text" id="usuario" required>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" required>
+            <button type="submit" class="boton-login">Iniciar Sesión</button>
+        </form>
+        <p id="mensajeLogin" class="mensaje"></p>
+        <p>¿No tienes cuenta? <a href="#" id="mostrarRegistro">Registrarse</a></p>
+        <p><a href="#" id="olvidarPassword">Olvidé mi contraseña</a></p>
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="registroContainer" class="form-container hidden">
+        <h2>Registrar Usuario</h2>
+        <form id="registroForm">
+            <label for="regUsuario">Usuario:</label>
+            <input type="text" id="regUsuario" required>
+            <label for="regPassword">Contraseña:</label>
+            <input type="password" id="regPassword" required>
+            <button type="submit" class="boton-login">Registrar</button>
+        </form>
+        <p id="mensajeRegistro" class="mensaje"></p>
+        <p>¿Ya tienes cuenta? <a href="#" id="mostrarLogin">Iniciar Sesión</a></p>
+    </div>
+
+    <!-- BOTONES DE MATERIAS -->
+    <div id="materiasContainer" class="materias-container hidden">
+        <h2>Selecciona la materia</h2>
+        <button class="materia-btn" data-materia="Inglés">Inglés</button>
+        <button class="materia-btn" data-materia="Matemática">Matemática</button>
+        <button class="materia-btn" data-materia="Química">Química</button>
+        <button class="materia-btn" data-materia="DiseñoSoftware">Diseño de Software</button>
+        <button class="materia-btn" data-materia="ProgramacionWeb">Programación Web</button>
+        <button class="materia-btn" data-materia="ApoyoM">Apoyo M</button>
+        <button class="materia-btn" data-materia="TAP">TAP</button>
+        <button class="materia-btn" data-materia="AGBD">AGBD</button>
+        <button class="materia-btn" data-materia="AED">AED</button>
+    </div>
+
+    <!-- FORMULARIOS -->
+    <div id="formContainer" class="form-container hidden">
+        <h2 id="formTitle"></h2>
+        <form id="materiaForm">
+            <label for="profesor">Nombre del Profesor:</label>
+            <input type="text" id="profesor" required>
+
+            <label for="apunte">Apunte:</label>
+            <input type="text" id="apunte" required>
+
+            <button type="submit" class="boton-login">Agregar Apunte</button>
+            <button type="button" id="volverMaterias" class="boton-login">Volver a Materias</button>
+            <button type="button" id="volverLogin" class="boton-login">Volver al Login</button>
+        </form>
+        <p id="mensajeForm" class="mensaje"></p>
+    </div>
+
+    <script>
+        const usuarios = JSON.parse(localStorage.getItem("usuarios") || "{}");
+
+        const registroContainer = document.getElementById("registroContainer");
+        const loginContainer = document.getElementById("loginContainer");
+        const materiasContainer = document.getElementById("materiasContainer");
+        const formContainer = document.getElementById("formContainer");
+        const registroForm = document.getElementById("registroForm");
+        const loginForm = document.getElementById("loginForm");
+        const materiaForm = document.getElementById("materiaForm");
+        const mensajeRegistro = document.getElementById("mensajeRegistro");
+        const mensajeLogin = document.getElementById("mensajeLogin");
+        const mensajeForm = document.getElementById("mensajeForm");
+        const formTitle = document.getElementById("formTitle");
+
+        // Alternar login / registro
+        document.getElementById("mostrarLogin").addEventListener("click", () => {
+            registroContainer.classList.add("hidden");
+            loginContainer.classList.remove("hidden");
+        });
+        document.getElementById("mostrarRegistro").addEventListener("click", () => {
+            loginContainer.classList.add("hidden");
+            registroContainer.classList.remove("hidden");
+        });
+
+        // REGISTRO
+        registroForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const usuario = document.getElementById("regUsuario").value;
+            const password = document.getElementById("regPassword").value;
+            if(usuarios[usuario]){
+                mensajeRegistro.textContent = "El usuario ya existe";
+            } else {
+                usuarios[usuario] = password;
+                localStorage.setItem("usuarios", JSON.stringify(usuarios));
+                mensajeRegistro.style.color = "green";
+                mensajeRegistro.textContent = "Usuario registrado correctamente!";
+                registroForm.reset();
+            }
+        });
+
+        // LOGIN
+        loginForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const usuario = document.getElementById("usuario").value;
+            const password = document.getElementById("password").value;
+            if(usuarios[usuario] && usuarios[usuario] === password){
+                loginContainer.classList.add("hidden");
+                mensajeLogin.textContent = "";
+                materiasContainer.classList.remove("hidden");
+            } else {
+                mensajeLogin.textContent = "Usuario o contraseña incorrectos";
+            }
+        });
+
+        // OLVIDÉ MI CONTRASEÑA
+        document.getElementById("olvidarPassword").addEventListener("click", (e) => {
+            e.preventDefault();
+            const usuario = prompt("Ingresa tu nombre de usuario para recuperar la contraseña:");
+            if(usuario && usuarios[usuario]){
+                alert(`Tu contraseña es: ${usuarios[usuario]}`);
+            } else {
+                alert("Usuario no encontrado");
+            }
+        });
+
+        // BOTONES DE MATERIAS
+        const materiaButtons = document.querySelectorAll(".materia-btn");
+        let materiaSeleccionada = "";
+        materiaButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                materiaSeleccionada = btn.dataset.materia;
+                formTitle.textContent = `Agregar Apuntes de ${btn.textContent}`;
+                formContainer.classList.remove("hidden");
+                materiasContainer.classList.add("hidden");
+                mensajeForm.textContent = "";
+                materiaForm.reset();
+            });
+        });
+
+        // ENVÍO DE FORMULARIO
+        materiaForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const profesor = document.getElementById("profesor").value;
+            const apunte = document.getElementById("apunte").value;
+            try {
+                const res = await fetch(`http://localhost:5000/${materiaSeleccionada}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ Profesor: profesor, Apuntes: apunte })
+                });
+                const data = await res.json();
+                mensajeForm.textContent = res.ok ? data.mensaje : "Error: " + data.error;
+                if(res.ok) {
+                    materiaForm.reset();
+                    formContainer.classList.add("hidden");
+                    materiasContainer.classList.remove("hidden");
+                }
+            } catch(err) {
+                mensajeForm.textContent = "Error de conexión";
+            }
+        });
+
+        // BOTÓN VOLVER A MATERIAS
+        document.getElementById("volverMaterias").addEventListener("click", () => {
+            formContainer.classList.add("hidden");   
+            materiasContainer.classList.remove("hidden"); 
+            mensajeForm.textContent = "";  
+            materiaForm.reset();           
+        });
+
+        // BOTÓN VOLVER AL LOGIN
+        document.getElementById("volverLogin").addEventListener("click", () => {
+            formContainer.classList.add("hidden");
+            materiasContainer.classList.add("hidden");
+            loginContainer.classList.remove("hidden");
+            mensajeLogin.textContent = "";
+            mensajeForm.textContent = "";
+            loginForm.reset();
+            materiaForm.reset();
+        });
+    </script>
+
+</body>
+</html>
